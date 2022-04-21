@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
     w.init();
 
     //开始程序 构建函数 读取ini文件 获取OPT file 路径
-    w.loadini();
+    w.loadini(argc,argv);
 
     //初始化rtknavi所需的各项参数 读取conf
     w.svrinit();

@@ -194,14 +194,49 @@ void NaviMain::init()
     Timer.start();
 }
 
-void NaviMain::loadini()
+void NaviMain::loadini(int argc, char *argv[])
 {
 
+    char taskpath[MAXCHAR];
+
+    //读文件，获取数据流内容和数据流数量
+
+    if(argc<2)
+    {
+
 #ifdef WIN32
-    loadopts("../conf/server/option.ini",iniopts);
+     strcpy(taskpath,"../conf/server/option.ini");
 #else
-    loadopts("option.ini",iniopts);
+    strcpy(taskpath,"option.ini");
 #endif
+
+    }
+    else
+    {
+     for (int i=1;i<argc;i++)
+     {
+         if (!strcmp(argv[i],"-i")&&i+1<argc)
+         {
+              strcpy(taskpath,argv[++i]);
+         }
+     }
+    }
+
+
+
+     printf("set optionfile path: %s\n",taskpath);
+
+    loadopts(taskpath,iniopts);
+
+
+
+
+//#ifdef WIN32
+//    //loadopts("D:/RTKSERVER/conf/server/option.ini",iniopts);
+//    loadopts("../conf/server/option.ini",iniopts);
+//#else
+//    loadopts("option.ini",iniopts);
+//#endif
 
 
     qDebug()<<"conf  file path:"<<ConfPath;
@@ -553,6 +588,8 @@ int NaviMain::SQLInit()
 
     //将dbopts的参数传入db  打开连接
     db =QSqlDatabase::addDatabase(dbconnType);
+    //设置重连
+    db.setConnectOptions("MYSQL_OPT_RECONNECT=1");
     //初始化连接参数
     db.setHostName(hostName);
     db.setPort(port);

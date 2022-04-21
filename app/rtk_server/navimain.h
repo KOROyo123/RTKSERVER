@@ -110,7 +110,7 @@ public:
 
     void init();//
 
-    void loadini();
+    void loadini(int argc, char *argv[]);
     void svrinit();//参数初始化 全局变量，load到class内
 
     void getrcvopts();//将全局变量的rcvopt部分读取到类内成员
