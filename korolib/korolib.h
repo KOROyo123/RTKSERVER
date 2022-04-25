@@ -24,5 +24,9 @@ public:
 
 EXPORT int char2arg(char* str, int* argc, char** argv, int number);//字符串转argc和argv   number=MAX_CMD_ARGV
 
+EXPORT void Blh2Xyz(double &x, double &y, double &z);
+EXPORT void Xyz2Blh(double &x, double &y, double &z);
+
+
 
 #endif // KOROLIB_H
