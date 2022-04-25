@@ -35,7 +35,7 @@ based on RTKlib 2.4.3 b34 , use Qt 6.2.1 MinGW 64-bit in Windows and Qt 6.1.2 GC
 
 
 ### 存在问题 ###
-- 没有数据库重连机制，为解决超时断开的问题
+- 没有数据库重连机制，未解决超时断开的问题
 
 ## 2. str2str_mult ##
 一个CUI数据记录软件，基于str2str改写，相较于RTKLIB提供的CUI程序str2str，可以实现多个数据流的同步记录。
