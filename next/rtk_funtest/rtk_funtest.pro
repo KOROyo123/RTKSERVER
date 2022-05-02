@@ -34,9 +34,13 @@ PRE_TARGETDEPS = $${RTKLIB}
 
 
 SOURCES += \
-        main.cpp
+        main.cpp \
+        mult_ant.cpp
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+HEADERS += \
+    mult_ant.h

@@ -55,7 +55,7 @@ public:
     int heart;
 
     double roverllh[3];//rad  流动站的坐标，计算流动站解算结果ENU用
-    double roverxyz[3];//重大问题！ llh转为xyz后计算的ENU U方向差别很大，暂时把xyz和llh都设置为输入参数，后续再测试为啥llh和xyz互转值不一样（与rtklib区别）
+    double roverxyz[3];//
 
     char postable[MAXCHAR];
     //char skytable[MAXCHAR];
