@@ -74,14 +74,18 @@ public:
 
     double avg_xyz[3];
     double avg_llh[3];
+    double delta_xyz[3][3];
     double enu[3][3];
-    double attitude[3];
+    double pose[3];
 
 
     int readpos(pos_t *pos, int n);
     int cal_avgpos();
     int cal_enu();
     int cal_pose();
+
+    int enu2pose(double *p0,double *p1,double *p2,double *p3,double *pose);
+
 };
 
 struct output_t

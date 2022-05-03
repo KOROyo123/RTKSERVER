@@ -1,7 +1,7 @@
-CONFIG -= qt
+QT -= gui
 
 TEMPLATE = lib
-DEFINES += KOROLIB_LIBRARY
+CONFIG += staticlib
 
 CONFIG += c++11
 
@@ -10,14 +10,13 @@ CONFIG += c++11
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    korolib.cpp
+    koro.cpp
 
 HEADERS += \
-    korolib_global.h \
-    korolib.h
+    koro.h
 
 # Default rules for deployment.
 unix {
-    target.path = /usr/lib
+    target.path = $$[QT_INSTALL_PLUGINS]/generic
 }
 !isEmpty(target.path): INSTALLS += target

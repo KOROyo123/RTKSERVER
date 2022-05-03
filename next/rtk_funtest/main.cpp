@@ -37,8 +37,7 @@ int main()
 
     QFile trace("G:/data_analysis/trace.txt");
     QFile avgpos("G:/data_analysis/avgpos.txt");
-    QFile attitude("G:/data_analysis/attitude.txt");
-
+    QFile pose("G:/data_analysis/poseDEBUG.txt");
 
 
 
@@ -63,10 +62,16 @@ int main()
 //        qDebug()<<&avgpos<<"文件打开失败";
 //        return 0;
 //    }
-//    if(!attitude.open(QIODevice::ReadOnly|QIODevice::Text)){
-//        qDebug()<<&attitude<<"文件打开失败";
-//        return 0;
-//    }
+    if(!pose.open(QIODevice::WriteOnly|QIODevice::Text)){
+        qDebug()<<&pose<<"文件打开失败";
+        return 0;
+    }
+
+
+
+    QTextStream outpose(&pose);
+    outpose.setFieldWidth(16);
+    outpose.setFieldAlignment(QTextStream::AlignLeft);
 
 
 /*----------------------POS文件处理部分---------------------------*/
@@ -89,7 +94,12 @@ int main()
     //double sec[2]={0.0};
     int sec[3]={0};  //暂时不处理1hz以上数据
 
-    for(int i=0;i<3;i++){
+
+    week[0]=pos[0].week[0];
+    week[1]=pos[0].week[1];
+    sec[0]=pos[0].sec[0];
+    sec[1]=pos[0].sec[1];
+    for(int i=1;i<3;i++){
         week[0]=week[0]<pos[i].week[0]?pos[i].week[0]:week[0];
         week[1]=week[1]>pos[i].week[1]?pos[i].week[1]:week[1];
 
@@ -111,7 +121,7 @@ int main()
     //文件处理
 
     //时间匹配  +缺失数据统计
-int n=2000;
+int n=70000;
 while(n){
 
     for(int i=0;i<3;i++){
@@ -160,8 +170,11 @@ while(n){
 
     //结果输出函数
 
-    qDebug()<<multant.attitude[0]*R2D<<multant.attitude[1]*R2D<<multant.attitude[2]*R2D;
+   // qDebug()<<sec[2]<<multant.pose[0]*R2D<<multant.pose[1]*R2D<<multant.pose[2]*R2D;
 
+    outpose<<sec[2]<<multant.pose[0]*R2D<<multant.pose[1]*R2D<<multant.pose[2]*R2D<<"\n";
+
+    sec[2]++;
     n--;
 }
     return 0;
