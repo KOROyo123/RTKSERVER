@@ -84,7 +84,7 @@ public:
     int cal_enu();
     int cal_pose();
 
-    int enu2pose(double *p0,double *p1,double *p2,double *p3,double *pose);
+    int enu2pose(double *p0,double *p1,double *p2,double *pose);
 
 };
 
