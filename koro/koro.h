@@ -4,10 +4,14 @@
 
 #include <math.h>
 
-class Koro
+namespace koro
 {
-public:
-    Koro();
+    int char2arg(char *str, int *argc, char **argv, int number);
+
+    void llh2xyz(double &x, double &y, double &z);
+    void xyz2llh(double &x, double &y, double &z);
+
+    void enu2pose(double *p0, double *p1, double *p2,double *pose);
 };
 
 #endif // KORO_H
