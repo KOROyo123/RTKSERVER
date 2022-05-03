@@ -35,7 +35,7 @@ based on RTKlib 2.4.3 b34 , use Qt 6.2.1 MinGW 64-bit in Windows and Qt 6.1.2 GC
 
 
 ### 存在问题 ###
-- 长时间数据中断后（导致数据库断开），导致数据无法正常写入数据库
+- 针对长时间数据断开会导致无法正常写入数据，在输出到数据库前增加了连接验证
 
 ## 2. str2str_mult ##
 一个CUI数据记录软件，基于str2str改写，相较于RTKLIB提供的CUI程序str2str，可以实现多个数据流的同步记录。

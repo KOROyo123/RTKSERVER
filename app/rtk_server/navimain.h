@@ -123,6 +123,7 @@ public:
 //————————————数据库相关函数——————————————————————————————————
     int SQLInit();//数据库初始化
     int SQLconnect_close();//关闭数据库
+    int connect_check();
 
     int creatTable(char* netname,char* basename,char* rovername,char*tableformat);//创建数据表，并定义表的主键、列名、列类型等
     //创建数据表的函数

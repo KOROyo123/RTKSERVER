@@ -476,6 +476,9 @@ void NaviMain::resetrcvopts()
 
 void NaviMain::outPutSol()
 {
+    //增加数据库连接检测功能；
+    connect_check();
+
     outputsol();
 }
 
@@ -664,6 +667,13 @@ int NaviMain::SQLconnect_close()
     qDebug()<<"connect is closed";
 
     return 0;
+}
+
+int NaviMain::connect_check()
+{
+    if(!db.isValid()){
+        db.open();
+    }
 }
 
 int NaviMain::sol_to_sql(rtksvr_t *svr, char* table_name)
