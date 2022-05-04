@@ -193,3 +193,8 @@ int pos_t::timeMatch(int week, int sec)
     }
 
 }
+
+int pos_t::lack_check()
+{
+
+}

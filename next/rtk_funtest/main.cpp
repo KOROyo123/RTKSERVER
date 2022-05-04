@@ -1,5 +1,5 @@
 /*
- * rtklib函数测试与分析
+ * 测试工程构建，用于各种功能实现的测试
  *
  *
 */
@@ -7,7 +7,7 @@
 #include <QCoreApplication>
 #include<QDebug>
 #include "rtklib.h"
-#include "korolib.h"
+//#include "korolib.h"
 #include <QFile>
 #include <QTextStream>
 #include "mult_ant.h"

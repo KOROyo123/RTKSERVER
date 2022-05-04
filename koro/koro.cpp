@@ -16,15 +16,15 @@ const double b = a - a / f_inverse;
 
 const double e = sqrt(a * a - b * b) / a;
 
-/* 把字符串转换为argc 和 argv ------------------------------------------------------
-* 利用三个点确定一个平面，输出平面相对于当前坐标系下的姿态信息
-* args   : double *p0       I   载体中心点的坐标{x,y,z}或{e,n,u}
-*          double *p1       I   航向坐标，P0→P1指向为航向
-*          double *p2       I   P0-P1直线外任意一点坐标，P0,P1,P2构建出一个确定的平面
-*          double *pose     O   attitude {alpha,beta,gama} (rad)  {横滚角，俯仰角，航向角}
+/* 把字符串转换为argc 和 argv ---------------------------------------------------
+* 将字符转分解为argc和argv
+* args   : char  *str       I   载体中心点的坐标{x,y,z}或{e,n,u}
+*          int   *argc      O   参数个数
+*          char  **argv     O   参数字符串数组
+*          int   max_argc   I   输入参数argv的数量上限
 * return : none
 *-----------------------------------------------------------------------------*/
-int koro::char2arg(char *str, int *argc, char **argv, int number)
+int koro::char2arg(char *str, int *argc, char **argv, int max_argc)
 {
     char *p;
     int num=0;
@@ -46,7 +46,7 @@ int koro::char2arg(char *str, int *argc, char **argv, int number)
             p++;
             continue;
         }
-        if(num >= number)
+        if(num >= max_argc)
             break;
 
         if(word_start){
@@ -99,7 +99,7 @@ void koro::xyz2llh(double &x, double &y, double &z)
 
 }
 /* 三点计算姿态 ------------------------------------------------------
-* 利用三个点确定一个平面，输出平面相对于当前坐标系下的姿态信息
+* 利用三个点确定一个平面，输出该平面相对于当前坐标系下的姿态信息
 * args   : double *p0       I   载体中心点的坐标{x,y,z}或{e,n,u}
 *          double *p1       I   航向坐标，P0→P1指向为航向
 *          double *p2       I   P0-P1直线外任意一点坐标，P0,P1,P2构建出一个确定的平面

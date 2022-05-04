@@ -6,7 +6,7 @@
 
 namespace koro
 {
-    int char2arg(char *str, int *argc, char **argv, int number);
+    int char2arg(char *str, int *argc, char **argv, int max_argc);
 
     void llh2xyz(double &x, double &y, double &z);
     void xyz2llh(double &x, double &y, double &z);
@@ -15,3 +15,5 @@ namespace koro
 };
 
 #endif // KORO_H
+
+

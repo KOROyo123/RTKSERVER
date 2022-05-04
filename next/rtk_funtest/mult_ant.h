@@ -22,14 +22,11 @@ protected:
 
 private:
 
-
     int flag; //数据处理标记
 
 public:
     QFile *file;//文件首地址
     char *line=new char[MAXLINE];//读取一行数据用
-
-
 
     //文件头信息
     int week[2];
@@ -38,6 +35,8 @@ public:
     int time_type;//时间的格式 1:GPST week+sec  2:GPST YMD+HMS 3:UTC YMD+HMS
 
     int lack_count;//缺失数据计数
+
+    QString lack;
 
     double avg_pos[3];//ECEF坐标系下的平均坐标  期望值
     double expect_value[3];
@@ -59,13 +58,19 @@ public:
 
 
     int timeMatch(int week, int sec);
+
+    int CEPs_cal();
+
+    int stds_cal();
+
+    int lack_check();
+
 };
 
 class mult_ant
 {
 public:
     mult_ant();
-
 
     int ant_num;//多天线文件数量
 
