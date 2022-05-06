@@ -1,8 +1,6 @@
 #ifndef SERVER_MULT_H
 #define SERVER_MULT_H
 
-
-
 #include<stdio.h>
 #include"rtklib.h"
 
@@ -10,8 +8,56 @@
 /* 宏定义 -----------------------------------------------------------------*/
 
 #define MAXSTR      1024                /* max length of a stream */
+#define MAXPATH     1024                /* max length of a filepath */
 
 
+
+
+
+
+/* 类 -------------------------------------------------------------------*/
+
+
+class Navi_t
+{
+public:
+    Navi_t();
+    Navi_t(int argc,char**argv);
+protected:
+
+
+
+private:
+
+    int stste; //线程状态 运行还是停止
+
+    int step;//数据处理已经完成的流程
+
+public:
+
+    rtksvr_t *svr=new rtksvr_t;
+    stream_t *moni=new stream_t;
+
+    prcopt_t prcopt;
+    solopt_t solopt;
+    filopt_t filopt;
+
+
+    char optpath[MAXPATH];
+
+
+
+    int Init(char *default_conf);
+    int resetState();
+    int clearAll();
+    int setSql();
+
+
+
+
+
+
+};
 
 
 /* 结构体 -----------------------------------------------------------------*/
@@ -28,10 +74,6 @@ struct svrio_t{           /* svr input/sol/log stream type */
     double rb[3];          /* base position */
 
 };
-
-
-
-
 
 
 /* 全局变量 ---------------------------------------------------------------*/

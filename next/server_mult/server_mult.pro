@@ -34,6 +34,7 @@ PRE_TARGETDEPS = $${RTKLIB}
 
 SOURCES += \
         main.cpp \
+    server_mult.cpp \
     servermain.cpp
 
 
@@ -45,6 +46,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 DISTFILES +=
 
 HEADERS += \
+    navi_server.h \
     server_mult.h \
     svrsettings.h
 
