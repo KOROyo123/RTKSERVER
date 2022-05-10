@@ -35,7 +35,7 @@ PRE_TARGETDEPS = $${RTKLIB}
 SOURCES += \
         main.cpp \
     server_mult.cpp \
-    servermain.cpp
+#    servermain.cpp
 
 
 # Default rules for deployment.
@@ -48,5 +48,5 @@ DISTFILES +=
 HEADERS += \
     navi_server.h \
     server_mult.h \
-    svrsettings.h
+#    svrsettings.h
 
