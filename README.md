@@ -35,7 +35,20 @@ based on RTKlib 2.4.3 b34 , use Qt 6.2.1 MinGW 64-bit in Windows and Qt 6.1.2 GC
 
 
 ### 存在问题 ###
-- 针对长时间数据断开会导致无法正常写入数据，在输出到数据库前增加了连接验证
+- 针对长时间数据断开会导致无法正常写入数据，在输出到数据库前增加了连接验证（问题未解决）
+
+
+## 2.server_mult  ##
+
+### 功能实现 ###
+
+- 相较于RTKSERVER，重构了类内结构，简化了实现流程。现在可以通过读取极为简单的函数来实现一个rtksvrthread的创建。
+- 完善了monitor功能，现在可以正常的通过tcp流接收实时的解算结果（如使用rtkplot来进行实时监控线程的解算状态）
+
+
+### 存在问题 ###
+
+- 早期版本，仅仅实现了多线程RTK的技术验证，距离替换RTKSERVER版本还有很多工作要做
 
 ## 2. str2str_mult ##
 一个CUI数据记录软件，基于str2str改写，相较于RTKLIB提供的CUI程序str2str，可以实现多个数据流的同步记录。
@@ -54,22 +67,16 @@ based on RTKlib 2.4.3 b34 , use Qt 6.2.1 MinGW 64-bit in Windows and Qt 6.1.2 GC
 
 # 下一步开发计划 #
 
-## 1.server_mult  ##
 
-- 实现server的多线程解算和数据库输出
-- 优化参数的输入路径
-- 重新设计逻辑结构，提升扩展性
-
-
-## 2.rtk_analysis  ##
+## 1.rtk_analysis  ##
 - 数据分析软件
 
 
-## 3.rtk_tools  ##
+## 2.rtk_tools  ##
 
 - GNSS数据处理小工具
 
-## 4.server_GUI  ##
+## 3.server_GUI  ##
 
 - SERVER程序的图形化界面接口
 
@@ -78,3 +85,11 @@ based on RTKlib 2.4.3 b34 , use Qt 6.2.1 MinGW 64-bit in Windows and Qt 6.1.2 GC
 ## koro.h  ##
 
 用于封装一些函数，实现一些开发过程中需要用到的功能
+
+### 已添加功能 ###
+
+
+- enu2pose
+
+
+	利用当前坐标系下任意三个点构成一个平面，输入三个点的坐标，输出该平面相对于当前坐标系下的姿态信息
