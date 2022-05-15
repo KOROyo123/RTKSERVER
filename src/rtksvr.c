@@ -1327,6 +1327,9 @@ extern int svrThreadCreat(rtksvr_t *svr)
 extern int svrOutput(rtksvr_t *svr)
 {
 
+    rtksvrlock(svr);
+
+    rtksvrunlock(svr);
 
 //    printf("%d %d %f\n",svr->state,svr->solbuf[0].stat,svr->solbuf[0].ratio);
     return 0;

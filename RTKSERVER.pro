@@ -2,7 +2,8 @@ TEMPLATE = subdirs
 
 SUBDIRS= src \
          app \
-         korolib \
+         koro \
+#         korolib \
          next \
 #         learn
 

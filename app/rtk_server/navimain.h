@@ -55,7 +55,7 @@ public:
     int heart;
 
     double roverllh[3];//rad  流动站的坐标，计算流动站解算结果ENU用
-    double roverxyz[3];//重大问题！ llh转为xyz后计算的ENU U方向差别很大，暂时把xyz和llh都设置为输入参数，后续再测试为啥llh和xyz互转值不一样（与rtklib区别）
+    double roverxyz[3];//
 
     char postable[MAXCHAR];
     //char skytable[MAXCHAR];
@@ -123,6 +123,7 @@ public:
 //————————————数据库相关函数——————————————————————————————————
     int SQLInit();//数据库初始化
     int SQLconnect_close();//关闭数据库
+    int connect_check();
 
     int creatTable(char* netname,char* basename,char* rovername,char*tableformat);//创建数据表，并定义表的主键、列名、列类型等
     //创建数据表的函数

@@ -7,5 +7,5 @@ SUBDIRS= rtk_analysis \
 #    SPP\
 #    rtkrcv_qt\
     rtk_funtest \
-    rtk_tools\
+#    rtk_tools\
     server_mult

@@ -1,0 +1,5 @@
+task1 -in tcpcli://101.34.12.202:10001 -out file://E:/GNSSDATA/buliding/CH01_y%m%d.log::T::S=24
+task2 -in tcpcli://101.34.12.202:10002 -out file://E:/GNSSDATA/buliding/CH02_y%m%d.log::T::S=24
+task3 -in tcpcli://101.34.12.202:10003 -out file://E:/GNSSDATA/buliding/CH03_y%m%d.log::T::S=24
+task4 -in tcpcli://101.34.12.202:10004 -out file://E:/GNSSDATA/buliding/CH04_y%m%d.log::T::S=24
+END OF LIST

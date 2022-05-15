@@ -201,25 +201,21 @@ void NaviMain::loadini(int argc, char *argv[])
 
     //读文件，获取数据流内容和数据流数量
 
-    if(argc<2)
-    {
+    if(argc<2){
 
 #ifdef WIN32
-     strcpy(taskpath,"../conf/server/option.ini");
+        strcpy(taskpath,"../conf/server/option.ini");
 #else
-    strcpy(taskpath,"option.ini");
+        strcpy(taskpath,"option.ini");
 #endif
 
     }
-    else
-    {
-     for (int i=1;i<argc;i++)
-     {
-         if (!strcmp(argv[i],"-i")&&i+1<argc)
-         {
-              strcpy(taskpath,argv[++i]);
-         }
-     }
+    else{
+        for (int i=1;i<argc;i++){
+            if (!strcmp(argv[i],"-i")&&i+1<argc){
+             strcpy(taskpath,argv[++i]);
+            }
+        }
     }
 
 
@@ -476,6 +472,9 @@ void NaviMain::resetrcvopts()
 
 void NaviMain::outPutSol()
 {
+    //增加数据库连接检测功能；
+    connect_check();
+
     outputsol();
 }
 
@@ -664,6 +663,13 @@ int NaviMain::SQLconnect_close()
     qDebug()<<"connect is closed";
 
     return 0;
+}
+
+int NaviMain::connect_check()
+{
+    if(!db.isValid()){
+        db.open();
+    }
 }
 
 int NaviMain::sol_to_sql(rtksvr_t *svr, char* table_name)

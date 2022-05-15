@@ -33,13 +33,16 @@ PRE_TARGETDEPS = $${RTKLIB}
 
 SOURCES += \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    posconv.cpp
 
 HEADERS += \
-    mainwindow.h
+    mainwindow.h \
+    posconv.h
 
 FORMS += \
-    mainwindow.ui
+    mainwindow.ui \
+    posconv.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
