@@ -1,6 +1,6 @@
 #ifndef SERVER_MULT_H
 #define SERVER_MULT_H
-
+/* ------------------------------------------------------------------------*/
 #include <QObject>
 #include<stdio.h>
 #include <string.h>
@@ -17,9 +17,8 @@
 #define DEFAULTPORT 52001               // default monitor port number
 #define MAXPORTOFF  9                   // max port number offset
 
+/* system options table --------------------------------------------------*/
 
-
-/* system options table ------------------------------------------------------*/
 #define SWTOPT  "0:off,1:on"
 #define MODOPT  "0:single,1:dgps,2:kinematic,3:static,4:movingbase,5:fixed,6:ppp-kine,7:ppp-static,8:ppp-fixed"
 #define FRQOPT  "1:l1,2:l1+2,3:l1+2+3,4:l1+2+3+4,5:l1+2+3+4+5"
@@ -42,11 +41,6 @@
 #define TIDEOPT "0:off,1:on,2:otl"
 #define PHWOPT  "0:off,1:on,2:precise"
 
-
-
-
-
-
 #define TIMOPT  "0:gpst,1:utc,2:jst,3:tow"
 #define CONOPT  "0:dms,1:deg,2:xyz,3:enu,4:pyl"
 #define FLGOPT  "0:off,1:std+2:age/ratio/ns"
@@ -57,14 +51,7 @@
 #define SOLOPT  "0:llh,1:xyz,2:enu,3:nmea"
 #define MSGOPT  "0:all,1:rover,2:base,3:corr"
 
-
-
-
-
-
-
 /* 类 ------------------------ -------------------------------------------*/
-
 
 class Navi_t
 {
@@ -76,28 +63,22 @@ public:
 protected:
 
 private:
-
     int stste; //线程状态 运行还是停止
-
     int step;//数据处理已经完成的流程
 
     int openMoni();
-
     int setDefaultSvr();
-
     int setDefaultOpt();
-
     int resetAll();
-
     int optCheck();
-
     void buff2sysopt();
-
 
 public:
 
     //定时器  周期性输出用
-    QTimer Timer;
+    //QTimer Timer;
+
+    char optpath[MAXPATH];
 
     rtksvr_t *svr;
     stream_t *moni;
@@ -109,16 +90,11 @@ public:
     int antpostype[2];
     double antpos[2][3];
 
-
     double elmask;
     char snrmask[3][1024];
     char exsats[1024];
     double elmaskar;
     double elmaskhold;
-
-    char optpath[MAXPATH];
-
-
 
     int SvrCycle,
         SvrBuffSize,
@@ -142,7 +118,6 @@ public:
     char localdir[1024]=""; /* local directory for ftp/http */ //无效
     uint32_t tick_master=0; /* time tick master for replay */  //无效
 
-
     //int StrSwitch[MAXSTRRTK];//数据流开关
     int StrType[MAXSTRRTK];//数据流类型
     int StrFormat[MAXSTRRTK];//数据格式
@@ -156,9 +131,7 @@ public:
         buffsize,          //receive/send buffer size (bytes);
         fswapmargin;       //file swap margin (s)
 
-
     char errmsg[20148];
-
 
     int Init(char *default_conf);
 
@@ -167,10 +140,7 @@ public:
     int resetState();
     int clearAll();
     int setSql();
-
-
     int setTempOpt();
-
     int outstat();
 
 
@@ -179,72 +149,20 @@ public:
 
 /* 结构体 -----------------------------------------------------------------*/
 
-
-
-struct svrio_t{           /* svr input/sol/log stream type */
-    int type[8];           /* svr input(0-2)/sol(3-4)/log(5-7) stream type */
-    int format[8];         /* svr input(0-2) / sol(3-4) / log(5-7) stream formats */
-                           /*   ( STRFMT_??? / SOLF_??? / 0, 0 ,0  )   */
-
-    char paths[8][MAXSTR]; /*svr input(0-2) / sol(3-4) / log(5-7) stream path*/
-    int refpos;            /* base position for relative mode */
-                           /* (0:pos in prcopt,  1:average of single pos, */
-                           /*  2:read from file, 3:rinex header, 4:rtcm pos) */
-    double rb[3];          /* base position */
-
-};
-
-
 /* 全局变量 ---------------------------------------------------------------*/
-
-extern const prcopt_t svr_prcopt_defult;
-
-extern const solopt_t svr_solopt_default;
-
-extern const int strtype[8],strfmt[8],svrcycle,
-                 timeout,reconnect,nmeacycle,
-                 fswapmargin,buffsize,navmsgsel,
-                 nmeareq;
-
-extern const double nmeapos[3];
-
-extern char strpath[8][MAXSTR],
-            proxyaddr[MAXSTR],
-            *paths[8],
-            *cmds[3],
-            *cmds_periodic[3],
-            *ropts[3],
-            errmsg[20148];
-
 
 
 /* 函数 ------------------------------------------------------------------*/
 
 //主循环函数
-extern int svrMain();
 
 //任务输入函数
 
-
-
 //任务初始化与线程创建函数
-extern int svrInit(rtksvr_t *svr,stream_t *moni);
-
-extern int optInit(svrio_t *svrio);
-
-extern int optLoad(svrio_t *svr);
-
-extern int moniOpen(stream_t *moni,int moniport);
-
-extern int svrStart(rtksvr_t *svr,svrio_t *svrio);
 
 //输出函数
 
 
-
-
-
-
-
+//---------------------------------------------------------------------------
 #endif // SERVER_MULT_H
 

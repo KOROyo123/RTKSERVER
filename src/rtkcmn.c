@@ -3398,8 +3398,18 @@ extern void createdir(const char *path)
     strcpy(buff,path);
     if (!(p=strrchr(buff,FILEPATHSEP))) return;
     *p='\0';
-    
+
+/* 代码替换，修改了目录的创建方式-----------------------*/
+//#ifdef WIN32
+//    CreateDirectory(buff,NULL);
+//#else
+//    mkdir(buff,0777);
+//#endif
+
+/* -----------------------------------------------*/
     mkdir_r(buff);
+
+
 }
 /* replace string ------------------------------------------------------------*/
 static int repstr(char *str, const char *pat, const char *rep)

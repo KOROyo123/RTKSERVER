@@ -2,7 +2,6 @@
 
 Navi_t::Navi_t()
 {
-
     resetState();
 
     //空间分配
@@ -68,9 +67,6 @@ Navi_t::Navi_t()
 
     errmsg[0]='\0';
 
-
-
-
 }
 
 Navi_t::Navi_t(int argc, char **argv)
@@ -82,9 +78,6 @@ Navi_t::~Navi_t()
 {
     delete StrPath[MAXSTRRTK];
 }
-
-
-
 
 //打开监视数据流，MonitorSetPort为设置流，MonitorOpenPort为实际打开流
 int Navi_t::openMoni()
@@ -108,16 +101,13 @@ int Navi_t::openMoni()
             return 1;
         }
     }
-//    QMessageBox::critical(this,tr("Error"),QString(tr("monitor port %1-%2 open error")).arg(port).arg(port+MAXPORTOFF));
-    //    MonitorOpenPort=0;
+
 }
 
 int Navi_t::setDefaultSvr()
 {
 
 }
-
-
 
 int Navi_t::setDefaultOpt()
 {
@@ -292,9 +282,6 @@ int Navi_t::setDefaultOpt()
         {"",0,NULL,""}
     };
 
-
-
-
     loadopts(optpath,loadsysopts);
     loadopts(optpath,loadrcvopt);
 
@@ -434,7 +421,6 @@ int Navi_t::setDefaultOpt()
 }
 
 
-
 int Navi_t::resetAll()
 {
     //初始化设置
@@ -466,9 +452,6 @@ int Navi_t::resetAll()
         }
     }
     exsats[0] ='\0';
-
-
-
 
     SvrCycle=1;
     SvrBuffSize=32768;
@@ -521,9 +504,6 @@ int Navi_t::resetAll()
 
 int Navi_t::optCheck()
 {
-
-
-
     toinact    =0<toinact&&toinact<1000?1000:toinact; /* >=1s */
     ticonnect  =ticonnect<1000?1000:ticonnect; /* >=1s */
     tirate     =tirate<100 ?100 :tirate; /* >=0.1s */
@@ -587,8 +567,6 @@ void Navi_t::buff2sysopt()
 
 }
 
-
-
 /* 类初始化 ---------------------------------------------------
 * 将默认设置读取进类内，
 * args   : char  *default_conf       I   默认设置的路径
@@ -597,25 +575,11 @@ void Navi_t::buff2sysopt()
 *-----------------------------------------------------------------------------*/
 int Navi_t::Init( char *default_conf)
 {
-
     strncpy(optpath,default_conf,MAXPATH);
-
 
     setDefaultOpt();
 
-//    svropt初始化
-//    svrInit();
-
-    //从写入设置
-    //loadopt();
-
-    //监测各种设置是否非法
     optCheck();
-
-
-
-
-
 
     return 0;
 }
@@ -629,12 +593,8 @@ int Navi_t::svrStart()
 
     /* execute start command */
 
-
-
     //打开moni端口
     openMoni();
-
-
 
     /* start rtk server */
     if (!rtksvrstart(svr,SvrCycle,SvrBuffSize,StrType,StrPath,StrFormat,NavSel,
@@ -650,22 +610,15 @@ int Navi_t::svrStart()
 
 int Navi_t::svrStop()
 {
-    char **cmds;
+    char **cmds = nullptr;
 
     rtksvrstop(svr,cmds);
 }
-
-
-
-
-
 
 //构建类和重置类时使用，重置状态变量的值
 int Navi_t::resetState()
 {
     stste=0;
-
-
     return 0;
 }
 
@@ -683,6 +636,6 @@ int Navi_t::outstat()
 
     rtksvrunlock(svr);
 
-
+    return 0;
 }
 
