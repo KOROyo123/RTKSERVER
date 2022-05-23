@@ -1096,12 +1096,14 @@ static int gentcp(tcp_t *tcp, int type, char *msg)
 
 
 /* 为解决 socket error 10093 错误 在socket函数前增加网络初始化步骤  -----------------*/
+#ifdef WIN32
     WSADATA wsaData;
     int nRet;
     if((nRet = WSAStartup(MAKEWORD(2,2),&wsaData)) != 0){
         printf("WSAStartup failed\n");
         exit(0);
     }
+#endif
 /* ----------------------------------------------------------------------------*/
     /* generate socket */
     if ((tcp->sock=socket(AF_INET,SOCK_STREAM,0))==(socket_t)-1) {

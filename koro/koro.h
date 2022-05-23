@@ -15,6 +15,11 @@
 #define MAXSTR      1024                /* max length of a stream */
 #define MAXPATH     1024                /* max length of a filepath */
 
+//for Linux
+#ifndef MAXCHAR
+#define MAXCHAR 0x7f
+#endif
+
 
 
 #ifdef WIN32

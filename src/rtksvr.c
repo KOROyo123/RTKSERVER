@@ -946,7 +946,7 @@ extern int rtksvrstart(rtksvr_t *svr, int cycle, int buffsize, int *strs,
         writesolhead(svr->stream+i,svr->solopt+i-3);
     }
     /* create rtk server thread */
-#ifdef WIN32
+#ifdef WIN32WIN32
     if (!(svr->thread=CreateThread(NULL,0,rtksvrthread,svr,0,NULL))) {
 #else
     if (pthread_create(&svr->thread,NULL,rtksvrthread,svr)) {

@@ -33,7 +33,10 @@
 #include <unistd.h>
 #include "rtklib.h"
 
-
+//for Linux
+#ifndef MAXCHAR
+#define MAXCHAR 0x7f
+#endif
 
 
 #define MAX_CMD_ARGV  50
@@ -541,7 +544,11 @@ int main(int argc, char **argv)
 
         }
         sleepms(dispint);
+#ifdef WIN32
         system("cls");
+#else
+        system("clear");
+#endif
     }
 
 

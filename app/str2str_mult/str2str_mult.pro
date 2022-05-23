@@ -5,7 +5,7 @@ CONFIG -= qt
 
 include(../../RTKLib.pri)
 
-TARGET = str2str_mult_v1.6.1
+TARGET = str2str_mult_v1.6.2
 TEMPLATE = app
 
 INCLUDEPATH += ../../src
@@ -14,6 +14,8 @@ INCLUDEPATH += ../../src
 linux{
     RTKLIB =../../src/libRTKLib.a
     LIBS +=  $${RTKLIB}
+# 因为pthread的库不是Linux系统的库，所以在进行编译的时候要加上：-lpthread
+    LIBS += -lpthread
 }
 macx{
     RTKLIB =../../src/libRTKLib.a
