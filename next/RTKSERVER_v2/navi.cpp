@@ -1,72 +1,23 @@
-#include "server_mult.h"
+#include "navi.h"
 
 Navi_t::Navi_t()
 {
-    resetState();
+
 
     //空间分配
     svr=new rtksvr_t;
     moni=new stream_t;
 
-    //svr初始化
-    rtksvrinit(svr);
-    strinit(moni);
+    resetState();
 
-    //sysopt初始化
-    prcopt=prcopt_default;
-    solopt=solopt_default;
-    filopt={};
+}
 
-    optpath[0]='\0';
+Navi_t::Navi_t(rtksvr_t *asvr,stream_t *amoni)
+{
+    svr=asvr;
+    moni=amoni;
 
-    //初始化设置
-    SvrCycle=1;
-    SvrBuffSize=32768;
-    SvrTimeout=10000;
-    SvrReconnect=10000;
-
-    SvrNmeaCycle=5000;
-    SvrNmeaReq=0;
-    SvrNmeaPos[2]=SvrNmeaPos[1]=SvrNmeaPos[0]=0.0;
-
-    SolBuffSize=1000;
-    SvrLogSize=100;
-
-    NavSel=3;
-
-    SbasSel=0;
-
-    MonitorSetPort=12200;
-    MonitorOpenPort=0;
-
-    //初始化数据流
-    for (int i=0;i<MAXSTRRTK;i++) {
-        //StrSwitch[i]=
-        StrType[i]=StrFormat[i]=0;
-    }
-    for(int i=0;i<MAXSTRRTK;i++){
-        StrPath[i]= new char[1024];
-        StrPath[i][0]='\0';
-    }
-
-
-    //初始化CMD
-    for (int i=0;i<3;i++) {
-        cmd[i]=new char[1024];
-        cmd_periodic[i]=new char[1024];
-        rcvopt[i]=new char[1024];
-        cmd[i][0]=cmd_periodic[i][0]=rcvopt[i][0]='\0';
-    }
-
-    //TCP流设置
-    toinact    =1000; /* >=1s */
-    ticonnect  =1000; /* >=1s */
-    tirate     =100; /* >=0.1s */
-    buffsize   =4096; /* >=4096byte */
-    fswapmargin=30;
-
-    errmsg[0]='\0';
-
+    resetState();
 }
 
 Navi_t::Navi_t(int argc, char **argv)
@@ -287,26 +238,6 @@ int Navi_t::setDefaultOpt()
 
     buff2sysopt();
 
-    //初始化 opt全局变量
-    //resetsysopts();
-    //resetrcvopts();
-
-    //将conf文件读入到 sysopts（prcopt_ solopt_ filopt_ 等）和rcvopts
-    //loadopts(optpath,sysopts);
-    //loadopts(optpath,rcvopts);
-
-    //将prcopt_ solopt_ filopt_等赋值给prcopt,solopt,filopt
-    //getsysopts(&prcopt,solopt,&filopt);
-    //getrcvopts();
-
-
-
-    //设置基站坐标模式和坐标
-//    prcopt.rovpos=1;// average of single position
-//    prcopt.rb[0]=0.0;
-//    prcopt.rb[1]=0.0;
-//    prcopt.rb[2]=0.0;
-
 
     //设置需要剔除的卫星
 //    for (i=0;i<MAXSAT;i++) {
@@ -317,8 +248,6 @@ int Navi_t::setDefaultOpt()
 //    readpcv(filopt.rcvantp,&pcvs);
 
 
-
-
     //设置星历
 //    prcopt.sateph=EPHOPT_BRDC;
 
@@ -326,95 +255,6 @@ int Navi_t::setDefaultOpt()
 //    prcopt.baseline[0]=0.0;
 //    prcopt.baseline[1]=0.0;
 
-
-
-    //设置数据流
-
-//    int StreamC[MAXSTRRTK]={0};//流开关
-//    int Stream[MAXSTRRTK]={0};//流类型
-
-
-
-//    for (i=0;i<3;i++) StrType[i]=StrSwitch[i]?itype[StrType[i]]:STR_NONE;
-//    for (i=3;i<5;i++) StrType[i]=StrSwitch[i]?otype[StrType[i]]:STR_NONE;
-//    for (i=5;i<8;i++) StrType[i]=StrSwitch[i]?otype[StrType[i]]:STR_NONE;
-//    for (i=0;i<8;i++) {
-//        //paths[i]= new char[1024];
-//        //StrPath[i][0]='\0';
-//        if      (StrType[i]==STR_NONE  ) strcpy(StrPath[i],"");
-//        else if (StrType[i]==STR_SERIAL) strcpy(StrPath[i],"");
-//        else if (StrType[i]==STR_FILE  ) strcpy(StrPath[i],"");
-//        else if (StrType[i]==STR_FTP||StrType[i]==STR_HTTP) strcpy(StrPath[i],"");
-//        else strcpy(StrPath[i],"");
-//    }
-
-
-
-//    //设置CMD
-
-//    for (i=0;i<3;i++) {
-//        cmds[i]=new char[1024];
-//        rcvopts[i]=new char[1024];
-//        cmds[i][0]=rcvopts[i][0]='\0';
-//        if (strs[i]==STR_SERIAL) {
-//           // if (CmdEna[i][0]) strcpy(cmds[i],qPrintable(Cmds[i][0]));
-//           // if (CmdEna[i][2]) strcpy(cmds_periodic[i], qPrintable(Cmds[i][2]));
-//        }
-//        else if (strs[i]==STR_TCPCLI||strs[i]==STR_TCPSVR||
-//                 strs[i]==STR_NTRIPCLI) {
-//           // if (CmdEnaTcp[i][0]) strcpy(cmds[i],qPrintable(CmdsTcp[i][0]));
-//           // if (CmdEnaTcp[i][2]) strcpy(cmds_periodic[i], qPrintable(CmdsTcp[i][2]));
-//        }
-//       // strcpy(rcvopts[i],qPrintable(RcvOpt[i]));
-//    }
-
-
-
-//    int NmeaCycle;
-//    //double pos[3],NmeaPos;
-
-
-
-//    NmeaCycle=NmeaCycle<1000?1000:NmeaCycle;
-//    pos[0]=NmeaPos[0]*D2R;
-//    pos[1]=NmeaPos[1]*D2R;
-//    pos[2]=0.0;
-//    pos2ecef(pos,nmeapos);
-
-//    strsetdir("");
-//    strsetproxy("");
-
-//    for (i=3;i<8;i++) {
-//        if (strs[i]==STR_FILE&&!ConfOverwrite(paths[i])) return;
-//    }
-
-
-
-//    if (DebugTraceF>0) {
-//        traceopen(TRACEFILE);
-//        tracelevel(DebugTraceF);
-//    }
-
-
-//    if (DebugStatusF>0) {
-//        rtkopenstat(STATFILE,DebugStatusF);
-//    }
-
-
-//    if (SolOpt.geoid>0&&GeoidDataFileF!="") {
-//        opengeoid(SolOpt.geoid,qPrintable(GeoidDataFileF));
-//    }
-
-
-//    if (DCBFileF!="") {
-//        readdcb(qPrintable(DCBFileF),&rtksvr.nav,NULL);
-//    }
-
-
-//    for (i=0;i<2;i++) {
-//        solopt[i]=SolOpt;
-//        solopt[i].posf=Format[i+3];
-//    }
 
     return 0;
 
@@ -619,9 +459,68 @@ int Navi_t::svrStop()
 int Navi_t::resetState()
 {
     stste=0;
+
+    //svr初始化
+    rtksvrinit(svr);
+    strinit(moni);
+
+    //sysopt初始化
+    prcopt=prcopt_default;
+    solopt=solopt_default;
+    filopt={};
+
+    optpath[0]='\0';
+
+    //初始化设置
+    SvrCycle=1;
+    SvrBuffSize=32768;
+    SvrTimeout=10000;
+    SvrReconnect=10000;
+
+    SvrNmeaCycle=5000;
+    SvrNmeaReq=0;
+    SvrNmeaPos[2]=SvrNmeaPos[1]=SvrNmeaPos[0]=0.0;
+
+    SolBuffSize=1000;
+    SvrLogSize=100;
+
+    NavSel=3;
+
+    SbasSel=0;
+
+    MonitorSetPort=12200;
+    MonitorOpenPort=0;
+
+    //初始化数据流
+    for (int i=0;i<MAXSTRRTK;i++) {
+        //StrSwitch[i]=
+        StrType[i]=StrFormat[i]=0;
+    }
+    for(int i=0;i<MAXSTRRTK;i++){
+        StrPath[i]= new char[1024];
+        StrPath[i][0]='\0';
+    }
+
+
+    //初始化CMD
+    for (int i=0;i<3;i++) {
+        cmd[i]=new char[1024];
+        cmd_periodic[i]=new char[1024];
+        rcvopt[i]=new char[1024];
+        cmd[i][0]=cmd_periodic[i][0]=rcvopt[i][0]='\0';
+    }
+
+    //TCP流设置
+    toinact    =1000; /* >=1s */
+    ticonnect  =1000; /* >=1s */
+    tirate     =100; /* >=0.1s */
+    buffsize   =4096; /* >=4096byte */
+    fswapmargin=30;
+
+    errmsg[0]='\0';
+
     return 0;
 }
-
 
 
 int Navi_t::outstat()
@@ -634,4 +533,3 @@ int Navi_t::outstat()
 
     return 0;
 }
-

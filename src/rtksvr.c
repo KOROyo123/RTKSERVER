@@ -572,7 +572,7 @@ static void *rtksvrthread(void *arg)
     uint32_t tick,ticknmea,tick1hz,tickreset;
     uint8_t *p,*q;
     char msg[128];
-    int i,j,n,fobs[3]={0},cycle,cputime;  //fobs[i]数据流i的obs观测值数量
+    int i,j,n,fobs[3]={0},cycle,cputime;  //fobs[i]记录三个数据流的各接收到了多少个历元的观测数据
     
     tracet(3,"rtksvrthread:\n");
     
@@ -626,13 +626,13 @@ static void *rtksvrthread(void *arg)
             }
             for (i=0;i<3;i++) svr->rtk.opt.rb[i]=svr->rb_ave[i];
         }
-        for (i=0;i<fobs[0];i++) { /* for each rover observation data */
+        for (i=0;i<fobs[0];i++) { /* for each rover observation data */  //对于每一组Rover GNSS观测数据  都采用第一组Base的观测数据进行相对定位，因此会产生差分年龄
             obs.n=0;
-            for (j=0;j<svr->obs[0][i].n&&obs.n<MAXOBS*2;j++) {
-                obs.data[obs.n++]=svr->obs[0][i].data[j];//获取rover第i组观测数据的观测数据 一组观测数据有多个频段 所以有多个data
+            for (j=0;j<svr->obs[0][i].n&&obs.n<MAXOBS*2;j++) {//取rover第i个历元卫星观测数据，放入obs.data
+                obs.data[obs.n++]=svr->obs[0][i].data[j];
             }
-            for (j=0;j<svr->obs[1][0].n&&obs.n<MAXOBS*2;j++) {
-                obs.data[obs.n++]=svr->obs[1][0].data[j];//获取base第1组观测数据的各频段数据
+            for (j=0;j<svr->obs[1][0].n&&obs.n<MAXOBS*2;j++) {//取base第一个历元卫星观测数据，放入obs.data
+                obs.data[obs.n++]=svr->obs[1][0].data[j];
             }
             /* carrier phase bias correction */
             if (!strstr(svr->rtk.opt.pppopt,"-DIS_FCB")) {
