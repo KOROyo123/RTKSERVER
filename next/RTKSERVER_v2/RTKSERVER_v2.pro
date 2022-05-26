@@ -34,7 +34,6 @@ PRE_TARGETDEPS = $${RTKLIB}
 
 
 SOURCES += \
-    interface.cpp \
         main.cpp \
     navi.cpp \
     sql_trans.cpp \
@@ -51,7 +50,6 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 DISTFILES +=
 
 HEADERS += \
-    interface.h \
     navi.h \
     sql_trans.h \
     svr_core.h \

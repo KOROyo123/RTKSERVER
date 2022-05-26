@@ -448,9 +448,9 @@ int main(int argc, char **argv)
     int maxtask=50;//最大支持的任务数量
     int tasknum=0;
 
-    char task[maxtask][MAXCHAR];
+    char task[maxtask][MAXSTR];
 
-    char taskpath[MAXCHAR];
+    char taskpath[MAXSTR];
 
     //读文件，获取数据流内容和数据流数量
 

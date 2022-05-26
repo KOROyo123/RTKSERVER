@@ -25,7 +25,7 @@
 #define MAXPATH     1024                /* max length of a filepath */
 
 #define DEFAULTPORT 52001               // default monitor port number
-#define MAXPORTOFF  9                   // max port number offset
+#define MAXPORTOFF  200                 // max port number offset
 
 /* system options table --------------------------------------------------*/
 

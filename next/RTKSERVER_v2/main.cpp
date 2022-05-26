@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
 
     SysCtrl SYS;
 
-    //初始化，读取基本的系统设置，并设置对应量
+    //初始化，读取基本的系统设置，并设置对应量   所有系统有关的参数在这里设置
     SYS.Init(argc,argv);
 
 
@@ -38,13 +38,17 @@ int main(int argc, char *argv[])
 
 //功能测试------------------------------------------------------------------
 
-    SYS.creatNaviThread("D:/RTKSERVER/conf/server_mult/test1.conf");
+//    SYS.createNaviThread("D:/RTKSERVER/conf/server_mult/test1.conf");
 
-    SYS.creatNaviThread("D:/RTKSERVER/conf/server_mult/test1.conf");
+//    SYS.createNaviThread("D:/RTKSERVER/conf/server_mult/test1.conf");
 
-    SYS.creatNaviThread("D:/RTKSERVER/conf/server_mult/test1.conf");
+//    SYS.createNaviThread("D:/RTKSERVER/conf/server_mult/test1.conf");
 
-    SYS.creatNaviThread("D:/RTKSERVER/conf/server_mult/test1.conf");
+//    SYS.createNaviThread("D:/RTKSERVER/conf/server_mult/test1.conf");
+
+
+
+
 
 
 

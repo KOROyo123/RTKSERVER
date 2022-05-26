@@ -526,8 +526,11 @@ int Navi_t::resetState()
 int Navi_t::outstat()
 {
     rtksvrlock(svr);
+    for(int i=0;i<svr->nsol;i++){
 
-    qDebug()<<svr->solbuf->time.time<<svr->solbuf->stat;
+        sol_t *sol=svr->solbuf+i;
+        qDebug()<<svr->solbuf->time.time<<sol->stat;
+    }
 
     rtksvrunlock(svr);
 
