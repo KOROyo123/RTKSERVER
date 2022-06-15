@@ -20,6 +20,12 @@
 
 based on RTKlib 2.4.3 b34 , use Qt 6.2.1 MinGW 64-bit in Windows and Qt 6.1.2 GCC 64bit in Linux.
 
+----------
+
+# 系统结构设计 #
+
+![](.\doc\image\system.png)
+
 
 ----------
 
@@ -69,7 +75,6 @@ based on RTKlib 2.4.3 b34 , use Qt 6.2.1 MinGW 64-bit in Windows and Qt 6.1.2 GC
 
 
 # 下一步开发计划 #
-
 
 ## 1.rtk_analysis  ##
 - 数据分析软件

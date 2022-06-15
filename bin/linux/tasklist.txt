@@ -1,0 +1,3 @@
+task1 -in tcpcli://101.34.228.202:10001 -out tcpsvr://:20001
+task2 -in tcpcli://101.34.228.202:10001 -out tcpsvr://:20002
+END OF LIST

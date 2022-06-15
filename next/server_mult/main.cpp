@@ -30,15 +30,15 @@ int main(int argc, char *argv[])
 
     //读取conf
     Navi1.Init(conf1);
-    Navi2.Init(conf1);
-    Navi3.Init(conf2);
-    Navi4.Init(conf2);
+//    Navi2.Init(conf1);
+//    Navi3.Init(conf2);
+//    Navi4.Init(conf2);
 
     //创建rtksvrthread
     Navi1.svrStart();
-    Navi2.svrStart();
-    Navi3.svrStart();
-    Navi4.svrStart();
+//    Navi2.svrStart();
+//    Navi3.svrStart();
+//    Navi4.svrStart();
 
     qDebug()<<"emmmm";
 
@@ -48,6 +48,9 @@ int main(int argc, char *argv[])
 
 //        sleepms(100);
 //    }
+
+
+
 
     return a.exec();
 }

@@ -1,6 +1,7 @@
 TEMPLATE = subdirs
 
-SUBDIRS= rtk_analysis \
+SUBDIRS=    RTKSERVER_v2\
+#    rtk_analysis \
 #    rtk_record  \
 #    rtkrcv_mult \
 #    str2str_qt     \

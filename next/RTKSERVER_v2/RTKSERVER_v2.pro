@@ -1,21 +1,25 @@
-TEMPLATE = app
-CONFIG += console c++11
+QT -= gui
+QT += core sql
+
+CONFIG += c++11 console
 CONFIG -= app_bundle
-CONFIG -= qt
+
+# You can make your code fail to compile if it uses deprecated APIs.
+# In order to do so, uncomment the following line.
+#DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 include(../../RTKLib.pri)
 
-TARGET = str2str_mult_v1.6.2
+TARGET = RTKSERVER_v2.0
 TEMPLATE = app
 
 INCLUDEPATH += ../../src
+INCLUDEPATH += ../../koro
 
 
 linux{
     RTKLIB =../../src/libRTKLib.a
     LIBS +=  $${RTKLIB}
-# 因为pthread的库不是Linux系统的库，所以在进行编译的时候要加上：-lpthread
-    LIBS += -lpthread
 }
 macx{
     RTKLIB =../../src/libRTKLib.a
@@ -30,7 +34,12 @@ PRE_TARGETDEPS = $${RTKLIB}
 
 
 SOURCES += \
-        main.cpp
+        main.cpp \
+    navi.cpp \
+    sql_trans.cpp \
+    svr_core.cpp \
+    sys_ctrl.cpp
+
 
 
 # Default rules for deployment.
@@ -38,5 +47,12 @@ qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
+DISTFILES +=
+
+HEADERS += \
+    navi.h \
+    sql_trans.h \
+    svr_core.h \
+    sys_ctrl.h
 
 

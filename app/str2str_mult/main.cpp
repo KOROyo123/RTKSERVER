@@ -33,7 +33,10 @@
 #include <unistd.h>
 #include "rtklib.h"
 
-
+//for Linux
+#ifndef MAXCHAR
+#define MAXCHAR 0x7f
+#endif
 
 
 #define MAX_CMD_ARGV  50
@@ -445,9 +448,9 @@ int main(int argc, char **argv)
     int maxtask=50;//最大支持的任务数量
     int tasknum=0;
 
-    char task[maxtask][MAXCHAR];
+    char task[maxtask][MAXSTR];
 
-    char taskpath[MAXCHAR];
+    char taskpath[MAXSTR];
 
     //读文件，获取数据流内容和数据流数量
 
@@ -541,7 +544,11 @@ int main(int argc, char **argv)
 
         }
         sleepms(dispint);
+#ifdef WIN32
         system("cls");
+#else
+        system("clear");
+#endif
     }
 
 

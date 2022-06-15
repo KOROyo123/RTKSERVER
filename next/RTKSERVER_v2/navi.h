@@ -1,6 +1,13 @@
-#ifndef SERVER_MULT_H
-#define SERVER_MULT_H
-/* ------------------------------------------------------------------------*/
+/*
+*   主要功能
+*       1、通过读取conf文件创建一个实时解算线程
+*       2、提供一个TCP server端口向外播发解算结果
+*
+*/
+#ifndef NAVI_H
+#define NAVI_H
+
+
 #include <QObject>
 #include<stdio.h>
 #include <string.h>
@@ -18,7 +25,7 @@
 #define MAXPATH     1024                /* max length of a filepath */
 
 #define DEFAULTPORT 52001               // default monitor port number
-#define MAXPORTOFF  9                   // max port number offset
+#define MAXPORTOFF  200                 // max port number offset
 
 /* system options table --------------------------------------------------*/
 
@@ -54,12 +61,12 @@
 #define SOLOPT  "0:llh,1:xyz,2:enu,3:nmea"
 #define MSGOPT  "0:all,1:rover,2:base,3:corr"
 
-/* 类 ------------------------ -------------------------------------------*/
 
 class Navi_t
 {
 public:
     Navi_t();
+    Navi_t(rtksvr_t *asvr, stream_t *amoni);
     Navi_t(int argc,char**argv);
 
     ~Navi_t();
@@ -148,27 +155,6 @@ public:
     int outputsol();
 
 
-
-
 };
 
-
-/* 结构体 -----------------------------------------------------------------*/
-
-/* 全局变量 ---------------------------------------------------------------*/
-
-
-/* 函数 ------------------------------------------------------------------*/
-
-//主循环函数
-
-//任务输入函数
-
-//任务初始化与线程创建函数
-
-//输出函数
-
-
-//---------------------------------------------------------------------------
-#endif // SERVER_MULT_H
-
+#endif // NAVI_H
