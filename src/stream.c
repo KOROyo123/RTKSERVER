@@ -2748,6 +2748,7 @@ extern int stropen(stream_t *stream, int type, int mode, const char *path)
         case STR_UDPSVR  : stream->port=openudpsvr(path,     stream->msg); break;
         case STR_UDPCLI  : stream->port=openudpcli(path,     stream->msg); break;
         case STR_MEMBUF  : stream->port=openmembuf(path,     stream->msg); break;
+
         case STR_FTP     : stream->port=openftp   (path,0,   stream->msg); break;
         case STR_HTTP    : stream->port=openftp   (path,1,   stream->msg); break;
         default: stream->state=0; return 1;

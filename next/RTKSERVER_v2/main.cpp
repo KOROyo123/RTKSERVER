@@ -28,7 +28,6 @@ int main(int argc, char *argv[])
     //新建任务队列
 
 
-
     //开启任务队列创建线程
     SYS.Start();
 
@@ -45,9 +44,6 @@ int main(int argc, char *argv[])
 //    SYS.createNaviThread("D:/RTKSERVER/conf/server_mult/test1.conf");
 
 //    SYS.createNaviThread("D:/RTKSERVER/conf/server_mult/test1.conf");
-
-
-
 
 
 

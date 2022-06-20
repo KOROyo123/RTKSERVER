@@ -62,14 +62,17 @@
 #define MSGOPT  "0:all,1:rover,2:base,3:corr"
 
 
-class Navi_t
+
+
+
+class Navi
 {
 public:
-    Navi_t();
-    Navi_t(rtksvr_t *asvr, stream_t *amoni);
-    Navi_t(int argc,char**argv);
+    Navi();
+    Navi(rtksvr_t *asvr, stream_t *amoni);
+    Navi(int argc,char**argv);
 
-    ~Navi_t();
+    ~Navi();
 protected:
 
 private:
@@ -83,12 +86,15 @@ private:
     int optCheck();
     void buff2sysopt();
 
+
 public:
 
     //定时器  周期性输出用
     //QTimer Timer;
 
     char optpath[MAXPATH];
+
+    navisvr_t *navisvr;
 
     rtksvr_t *svr;
     stream_t *moni;
@@ -154,6 +160,28 @@ public:
 
     int outputsol();
 
+
+};
+
+
+
+
+
+//公共/数据交换 用于多个线程间的GNSS数据传输
+struct navilist_t
+{
+    //
+    Navi *navi;
+
+    //svr指针
+    navisvr_t *data;
+
+    //moni端口
+    stream_t *moni;
+
+    navilist_t *last,*next;
+
+    lock_t lock;        /* lock flag */
 
 };
 

@@ -1,18 +1,23 @@
 #include "navi.h"
 
-Navi_t::Navi_t()
+Navi::Navi()
 {
 
 
     //空间分配
+    navisvr=new navisvr_t;
+
+
     svr=new rtksvr_t;
     moni=new stream_t;
+
+    navisvr->svr=svr;
 
     resetState();
 
 }
 
-Navi_t::Navi_t(rtksvr_t *asvr,stream_t *amoni)
+Navi::Navi(rtksvr_t *asvr,stream_t *amoni)
 {
     svr=asvr;
     moni=amoni;
@@ -20,18 +25,18 @@ Navi_t::Navi_t(rtksvr_t *asvr,stream_t *amoni)
     resetState();
 }
 
-Navi_t::Navi_t(int argc, char **argv)
+Navi::Navi(int argc, char **argv)
 {
     resetState();
 }
 
-Navi_t::~Navi_t()
+Navi::~Navi()
 {
     delete StrPath[MAXSTRRTK];
 }
 
 //打开监视数据流，MonitorSetPort为设置流，MonitorOpenPort为实际打开流
-int Navi_t::openMoni()
+int Navi::openMoni()
 {
     QString s;
     int i;
@@ -55,12 +60,12 @@ int Navi_t::openMoni()
 
 }
 
-int Navi_t::setDefaultSvr()
+int Navi::setDefaultSvr()
 {
 
 }
 
-int Navi_t::setDefaultOpt()
+int Navi::setDefaultOpt()
 {
 
 //    pcvs_t pcvr,pcvs;
@@ -261,7 +266,7 @@ int Navi_t::setDefaultOpt()
 }
 
 
-int Navi_t::resetAll()
+int Navi::resetAll()
 {
     //初始化设置
     resetState();
@@ -342,7 +347,7 @@ int Navi_t::resetAll()
 }
 
 
-int Navi_t::optCheck()
+int Navi::optCheck()
 {
     toinact    =0<toinact&&toinact<1000?1000:toinact; /* >=1s */
     ticonnect  =ticonnect<1000?1000:ticonnect; /* >=1s */
@@ -352,7 +357,7 @@ int Navi_t::optCheck()
 }
 
 /* system options buffer to options ------------------------------------------*/
-void Navi_t::buff2sysopt()
+void Navi::buff2sysopt()
 {
     double pos[3],*rr;
     char buff[1024],*p,*id;
@@ -407,13 +412,14 @@ void Navi_t::buff2sysopt()
 
 }
 
+
 /* 类初始化 ---------------------------------------------------
 * 将默认设置读取进类内，
 * args   : char  *default_conf       I   默认设置的路径
 *
 * return : none
 *-----------------------------------------------------------------------------*/
-int Navi_t::Init( char *default_conf)
+int Navi::Init( char *default_conf)
 {
     strncpy(optpath,default_conf,MAXPATH);
 
@@ -424,7 +430,7 @@ int Navi_t::Init( char *default_conf)
     return 0;
 }
 
-int Navi_t::svrStart()
+int Navi::svrStart()
 {
 
     /* set ftp/http directory and proxy */
@@ -437,7 +443,7 @@ int Navi_t::svrStart()
     openMoni();
 
     /* start rtk server */
-    if (!rtksvrstart(svr,SvrCycle,SvrBuffSize,StrType,StrPath,StrFormat,NavSel,
+    if (!navistart(navisvr,SvrCycle,SvrBuffSize,StrType,StrPath,StrFormat,NavSel,
                      cmd,cmd_periodic,rcvopt,SvrNmeaCycle,SvrNmeaReq,SvrNmeaPos,&prcopt,
                      &solopt,moni,errmsg)) {
         //trace(2,"rtk server start error (%s)\n",errmsg);
@@ -448,7 +454,7 @@ int Navi_t::svrStart()
 
 }
 
-int Navi_t::svrStop()
+int Navi::svrStop()
 {
     char **cmds = nullptr;
 
@@ -456,7 +462,7 @@ int Navi_t::svrStop()
 }
 
 //构建类和重置类时使用，重置状态变量的值
-int Navi_t::resetState()
+int Navi::resetState()
 {
     stste=0;
 
@@ -523,7 +529,7 @@ int Navi_t::resetState()
 }
 
 
-int Navi_t::outstat()
+int Navi::outstat()
 {
     rtksvrlock(svr);
     for(int i=0;i<svr->nsol;i++){
@@ -536,3 +542,5 @@ int Navi_t::outstat()
 
     return 0;
 }
+
+

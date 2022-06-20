@@ -56,13 +56,13 @@
 
 /* 类 ------------------------ -------------------------------------------*/
 
-class Navi_t
+class Navi
 {
 public:
-    Navi_t();
-    Navi_t(int argc,char**argv);
+    Navi();
+    Navi(int argc,char**argv);
 
-    ~Navi_t();
+    ~Navi();
 protected:
 
 private:
