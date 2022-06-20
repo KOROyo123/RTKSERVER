@@ -1,6 +1,6 @@
 #include "server_mult.h"
 
-Navi_t::Navi_t()
+Navi::Navi()
 {
     resetState();
 
@@ -69,18 +69,18 @@ Navi_t::Navi_t()
 
 }
 
-Navi_t::Navi_t(int argc, char **argv)
+Navi::Navi(int argc, char **argv)
 {
     resetState();
 }
 
-Navi_t::~Navi_t()
+Navi::~Navi()
 {
     delete StrPath[MAXSTRRTK];
 }
 
 //打开监视数据流，MonitorSetPort为设置流，MonitorOpenPort为实际打开流
-int Navi_t::openMoni()
+int Navi::openMoni()
 {
     QString s;
     int i;
@@ -104,12 +104,12 @@ int Navi_t::openMoni()
 
 }
 
-int Navi_t::setDefaultSvr()
+int Navi::setDefaultSvr()
 {
 
 }
 
-int Navi_t::setDefaultOpt()
+int Navi::setDefaultOpt()
 {
 
 //    pcvs_t pcvr,pcvs;
@@ -421,7 +421,7 @@ int Navi_t::setDefaultOpt()
 }
 
 
-int Navi_t::resetAll()
+int Navi::resetAll()
 {
     //初始化设置
     resetState();
@@ -502,7 +502,7 @@ int Navi_t::resetAll()
 }
 
 
-int Navi_t::optCheck()
+int Navi::optCheck()
 {
     toinact    =0<toinact&&toinact<1000?1000:toinact; /* >=1s */
     ticonnect  =ticonnect<1000?1000:ticonnect; /* >=1s */
@@ -512,7 +512,7 @@ int Navi_t::optCheck()
 }
 
 /* system options buffer to options ------------------------------------------*/
-void Navi_t::buff2sysopt()
+void Navi::buff2sysopt()
 {
     double pos[3],*rr;
     char buff[1024],*p,*id;
@@ -573,7 +573,7 @@ void Navi_t::buff2sysopt()
 *
 * return : none
 *-----------------------------------------------------------------------------*/
-int Navi_t::Init( char *default_conf)
+int Navi::Init( char *default_conf)
 {
     strncpy(optpath,default_conf,MAXPATH);
 
@@ -584,7 +584,7 @@ int Navi_t::Init( char *default_conf)
     return 0;
 }
 
-int Navi_t::svrStart()
+int Navi::svrStart()
 {
 
     /* set ftp/http directory and proxy */
@@ -608,7 +608,7 @@ int Navi_t::svrStart()
 
 }
 
-int Navi_t::svrStop()
+int Navi::svrStop()
 {
     char **cmds = nullptr;
 
@@ -616,7 +616,7 @@ int Navi_t::svrStop()
 }
 
 //构建类和重置类时使用，重置状态变量的值
-int Navi_t::resetState()
+int Navi::resetState()
 {
     stste=0;
     return 0;
@@ -624,7 +624,7 @@ int Navi_t::resetState()
 
 
 
-int Navi_t::outstat()
+int Navi::outstat()
 {
     rtksvrlock(svr);
     for(int i=0;i<svr->nsol;i++){

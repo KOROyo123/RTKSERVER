@@ -1783,10 +1783,118 @@ extern void settime(gtime_t time);
 
 
 
-/* additional functions for RTKSERVER ---------------------------------------------*/
-EXPORT int svrThreadCreat(rtksvr_t *svr);
+/* additional functions for RTKSERVER V2.0 -----------------------------------*/
+
+
+struct naviexchange_t
+{
+    //历元时间
+    time_t time;
+
+
+    //程序标记
+
+    //数据写入完成标记
+    int navi_flag;
+
+    //数据库读取完成标记
+    int sql_flag;
+
+    //数据融合读取完成标记
+    int core_flag;
+
+    //指针
+    struct naviexchange_t *last;
+    struct naviexchange_t *next;
+
+};
+
+typedef struct
+{
+    rtksvr_t *svr;
+
+
+
+    //other Information
+
+    //基线名称
+    char baseline[MAXCHAR];
+
+    //基站地址
+    //char base_str[MAXCHAR];
+
+    //测站地址
+    //char rover_str[MAXCHAR];
+
+
+
+
+    //dataExchangeCycle
+    int navicount;
+    int corecount;
+    int sqlcount;
+
+    struct naviexchange_t *exchangelist;
+
+    struct naviexchange_t *navianchor;
+
+    struct naviexchange_t *sqlanchor;
+
+    struct naviexchange_t *coreanchor;
+
+
+
+
+}navisvr_t;
+
+//typedef struct
+//{
+//    int state;
+//    int cycle;
+//    int buffsize;
+//    int npb;
+//    unsigned char *buff; /* input buffers */
+//    unsigned char *pbuf; /* peek buffer */
+//    unsigned int tick;  /* start tick */
+//    stream_t *stream;
+
+//    thread_t thread;    /* server thread */
+//    lock_t lock;        /* lock flag */
+
+
+    //navilist_t *navilist;
+
+//}coresvr_t;
+
+//sqlThread线程的参数
+//typedef struct
+//{
+//    int state;
+//    int cycle;
+//    int buffsize;
+//    int npb;
+//    unsigned char *buff; /* input buffers */
+//    unsigned char *pbuf; /* peek buffer */
+//    unsigned int tick;  /* start tick */
+//    stream_t *stream;
+
+//    thread_t thread;    /* server thread */
+//    lock_t lock;        /* lock flag */
+
+
+//    navilist_t *navilist;
+
+//}sqlsvr_t;
 
 EXPORT int svrOutput(rtksvr_t *svr);
+
+EXPORT int navistart (navisvr_t *navi, int cycle, int buffsize, int *strs,
+                         char **paths, int *formats, int navsel, char **cmds,
+                         char **cmds_periodic, char **rcvopts, int nmeacycle,
+                         int nmeareq, const double *nmeapos, prcopt_t *prcopt,
+                         solopt_t *solopt, stream_t *moni, char *errmsg);
+
+
 
 
 #ifdef __cplusplus

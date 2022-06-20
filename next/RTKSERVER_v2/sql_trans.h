@@ -12,8 +12,10 @@
 #include <QtSql/QSqlDatabase>
 #include <QtSql/QSqlQuery>
 
-#include "koro.h"
+
 #include "rtklib.h"
+#include "navi.h"
+#include "svr_core.h"
 
 //存放一个测站的所有结果的结构体
 struct sols
@@ -77,6 +79,56 @@ struct sqlData
 //创建的锁在开始的时候要initlock       initlock(&svr->lock);
 
 
+struct sqlexchange_t
+{
+    //历元时间
+    time_t time;
+
+
+    //程序标记
+
+
+    //数据库写入完成标记
+    int sql_flag;
+
+
+    //指针
+    int navicount;
+    int corecount;
+    int sqlcount;
+    struct sqlexchange_t *last;
+    struct sqlexchange_t *next;
+
+};
+
+
+
+
+
+struct sqlsvr_t
+{
+
+    navilist_t **navilist;
+    svrcore_t **svrcore;
+
+
+
+    int state;
+
+
+
+    //dataExchangeCycle
+
+    struct sqlexchange_t *exchangelist;
+
+    struct sqlexchange_t *coreanchor;
+
+    struct sqlexchange_t *sqlanchor;
+
+};
+
+
+
 class ToSql
 {
 public:
@@ -137,5 +189,8 @@ public:
 
 
 };
+
+
+
 
 #endif // TOSQL_H

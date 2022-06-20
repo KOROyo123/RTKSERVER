@@ -1174,12 +1174,14 @@ extern int rtksvrmark(rtksvr_t *svr, const char *name, const char *comment)
 
 /* rtk server thread ---------------------------------------------------------*/
 #ifdef WIN32
-static DWORD WINAPI svrThread(void *arg)
+static DWORD WINAPI navithread(void *arg)
 #else
-static void *svrThread(void *arg)
+static void *navithread(void *arg)
 #endif
 {
-    rtksvr_t *svr=(rtksvr_t *)arg;
+    navisvr_t *navi=(navisvr_t*)arg;
+
+    rtksvr_t *svr=navi->svr;
     obs_t obs;
     obsd_t data[MAXOBS*2];
     sol_t sol={{0}};
@@ -1187,7 +1189,7 @@ static void *svrThread(void *arg)
     uint32_t tick,ticknmea,tick1hz,tickreset;
     uint8_t *p,*q;
     char msg[128];
-    int i,j,n,fobs[3]={0},cycle,cputime;  //fobs[i]数据流i的obs观测值数量
+    int i,j,n,fobs[3]={0},cycle,cputime;  //fobs[i]记录三个数据流的各接收到了多少个历元的观测数据
 
     tracet(3,"rtksvrthread:\n");
 
@@ -1241,13 +1243,13 @@ static void *svrThread(void *arg)
             }
             for (i=0;i<3;i++) svr->rtk.opt.rb[i]=svr->rb_ave[i];
         }
-        for (i=0;i<fobs[0];i++) { /* for each rover observation data */
+        for (i=0;i<fobs[0];i++) { /* for each rover observation data */  //对于每一组Rover GNSS观测数据  都采用第一组Base的观测数据进行相对定位，因此会产生差分年龄
             obs.n=0;
-            for (j=0;j<svr->obs[0][i].n&&obs.n<MAXOBS*2;j++) {
-                obs.data[obs.n++]=svr->obs[0][i].data[j];//获取rover第i组观测数据的观测数据 一组观测数据有多个频段 所以有多个data
+            for (j=0;j<svr->obs[0][i].n&&obs.n<MAXOBS*2;j++) {//取rover第i个历元卫星观测数据，放入obs.data
+                obs.data[obs.n++]=svr->obs[0][i].data[j];
             }
-            for (j=0;j<svr->obs[1][0].n&&obs.n<MAXOBS*2;j++) {
-                obs.data[obs.n++]=svr->obs[1][0].data[j];//获取base第1组观测数据的各频段数据
+            for (j=0;j<svr->obs[1][0].n&&obs.n<MAXOBS*2;j++) {//取base第一个历元卫星观测数据，放入obs.data
+                obs.data[obs.n++]=svr->obs[1][0].data[j];
             }
             /* carrier phase bias correction */
             if (!strstr(svr->rtk.opt.pppopt,"-DIS_FCB")) {
@@ -1265,9 +1267,13 @@ static void *svrThread(void *arg)
                 timeset(gpst2utc(timeadd(svr->rtk.sol.time,tt)));
 
                 /* write solution */
-                svrOutput(svr);//自建函数
-
                 writesol(svr,i);
+
+
+                //向navi结构体中的子元素写入数据  用于数据的输出
+
+
+                //
             }
             /* if cpu overload, inclement obs outage counter and break */
             if ((int)(tickget()-tick)>=svr->cycle) {
@@ -1308,21 +1314,134 @@ static void *svrThread(void *arg)
     return 0;
 }
 
-
-extern int svrThreadCreat(rtksvr_t *svr)
+extern int navistart(navisvr_t *navi, int cycle, int buffsize, int *strs,
+                       char **paths, int *formats, int navsel, char **cmds,
+                       char **cmds_periodic, char **rcvopts, int nmeacycle,
+                       int nmeareq, const double *nmeapos, prcopt_t *prcopt,
+                       solopt_t *solopt, stream_t *moni, char *errmsg)
 {
+    rtksvr_t *svr=navi->svr;
+
+    gtime_t time,time0={0};
+    int i,j,rw;
+
+    tracet(3,"rtksvrstart: cycle=%d buffsize=%d navsel=%d nmeacycle=%d nmeareq=%d\n",
+           cycle,buffsize,navsel,nmeacycle,nmeareq);
+
+    if (svr->state) {
+        sprintf(errmsg,"server already started");
+        return 0;
+    }
+    strinitcom();
+    svr->cycle=cycle>1?cycle:1;
+    svr->nmeacycle=nmeacycle>1000?nmeacycle:1000;
+    svr->nmeareq=nmeareq;
+    for (i=0;i<3;i++) svr->nmeapos[i]=nmeapos[i];
+    svr->buffsize=buffsize>4096?buffsize:4096;
+    for (i=0;i<3;i++) svr->format[i]=formats[i];
+    svr->navsel=navsel;
+    svr->nsbs=0;
+    svr->nsol=0;
+    svr->prcout=0;
+    rtkfree(&svr->rtk);
+    rtkinit(&svr->rtk,prcopt);
+
+    if (prcopt->initrst) { /* init averaging pos by restart */
+        svr->nave=0;
+        for (i=0;i<3;i++) svr->rb_ave[i]=0.0;
+    }
+    for (i=0;i<3;i++) { /* input/log streams */
+        svr->nb[i]=svr->npb[i]=0;
+        if (!(svr->buff[i]=(uint8_t *)malloc(buffsize))||
+            !(svr->pbuf[i]=(uint8_t *)malloc(buffsize))) {
+            tracet(1,"rtksvrstart: malloc error\n");
+            sprintf(errmsg,"rtk server malloc error");
+            return 0;
+        }
+        for (j=0;j<10;j++) svr->nmsg[i][j]=0;
+        for (j=0;j<MAXOBSBUF;j++) svr->obs[i][j].n=0;
+        strcpy(svr->cmds_periodic[i],!cmds_periodic[i]?"":cmds_periodic[i]);
+
+        /* initialize receiver raw and rtcm control */
+        init_raw(svr->raw+i,formats[i]);
+        init_rtcm(svr->rtcm+i);
+
+        /* set receiver and rtcm option */
+        strcpy(svr->raw [i].opt,rcvopts[i]);
+        strcpy(svr->rtcm[i].opt,rcvopts[i]);
+
+        /* connect dgps corrections */
+        svr->rtcm[i].dgps=svr->nav.dgps;
+    }
+    for (i=0;i<2;i++) { /* output peek buffer */
+        if (!(svr->sbuf[i]=(uint8_t *)malloc(buffsize))) {
+            tracet(1,"rtksvrstart: malloc error\n");
+            sprintf(errmsg,"rtk server malloc error");
+            return 0;
+        }
+    }
+    /* set solution options */
+    for (i=0;i<2;i++) {
+        svr->solopt[i]=solopt[i];
+    }
+    /* set base station position */
+    if (prcopt->refpos!=POSOPT_SINGLE) {
+        for (i=0;i<6;i++) {
+            svr->rtk.rb[i]=i<3?prcopt->rb[i]:0.0;
+        }
+    }
+    /* update navigation data */
+    for (i=0;i<MAXSAT*4 ;i++) svr->nav.eph [i].ttr=time0;
+    for (i=0;i<NSATGLO*2;i++) svr->nav.geph[i].tof=time0;
+    for (i=0;i<NSATSBS*2;i++) svr->nav.seph[i].tof=time0;
+
+    /* set monitor stream */
+    svr->moni=moni;
+
+    /* open input streams */
+    for (i=0;i<8;i++) {
+        rw=i<3?STR_MODE_R:STR_MODE_W;
+        if (strs[i]!=STR_FILE) rw|=STR_MODE_W;
+        if (!stropen(svr->stream+i,strs[i],rw,paths[i])) {
+            sprintf(errmsg,"str%d open error path=%s",i+1,paths[i]);
+            for (i--;i>=0;i--) strclose(svr->stream+i);
+            return 0;
+        }
+        /* set initial time for rtcm and raw */
+        if (i<3) {
+            time=utc2gpst(timeget());
+            svr->raw [i].time=strs[i]==STR_FILE?strgettime(svr->stream+i):time;
+            svr->rtcm[i].time=strs[i]==STR_FILE?strgettime(svr->stream+i):time;
+        }
+    }
+    /* sync input streams */
+    strsync(svr->stream,svr->stream+1);
+    strsync(svr->stream,svr->stream+2);
+
+    /* write start commands to input streams */
+    for (i=0;i<3;i++) {
+        if (!cmds[i]) continue;
+        strwrite(svr->stream+i,(uint8_t *)"",0); /* for connect */
+        sleepms(100);
+        strsendcmd(svr->stream+i,cmds[i]);
+    }
+    /* write solution header to solution streams */
+    for (i=3;i<5;i++) {
+        writesolhead(svr->stream+i,svr->solopt+i-3);
+    }
+    /* create rtk server thread */
 #ifdef WIN32
-    if (!(svr->thread=CreateThread(NULL,0,rtksvrthread,svr,0,NULL))) {
+    if (!(svr->thread=CreateThread(NULL,0,navithread,navi,0,NULL))) {
 #else
-    if (pthread_create(&svr->thread,NULL,svrThread,svr)) {
+    if (pthread_create(&svr->thread,NULL,navithread,navi)) {
 #endif
-        for (int i=0;i<MAXSTRRTK;i++) strclose(svr->stream+i);
-        //sprintf(errmsg,"thread create error\n");
+        for (i=0;i<MAXSTRRTK;i++) strclose(svr->stream+i);
+        sprintf(errmsg,"thread create error\n");
         return 0;
     }
     return 1;
-
 }
+
 
 extern int svrOutput(rtksvr_t *svr)
 {
@@ -1334,3 +1453,5 @@ extern int svrOutput(rtksvr_t *svr)
 //    printf("%d %d %f\n",svr->state,svr->solbuf[0].stat,svr->solbuf[0].ratio);
     return 0;
 }
+
+

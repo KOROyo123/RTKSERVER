@@ -25,7 +25,7 @@ int main(int argc, char *argv[])
     char conf2[]={"D:/RTKSERVER/conf/server_mult/test2.conf"};
 
     //创建类
-    Navi_t Navi1,Navi2,Navi3,Navi4;
+    Navi Navi1,Navi2,Navi3,Navi4;
 
 
     //读取conf
