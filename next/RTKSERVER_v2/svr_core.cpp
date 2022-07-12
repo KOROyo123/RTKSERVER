@@ -122,11 +122,11 @@ int Core::svrStart()
 {
 
 
-    /* create control stream server thread */
+    /* create core stream server thread */
 #ifdef WIN32
     if (!(svr->thread=CreateThread(NULL,0,coresvrthread,svr,0,NULL))) {
 #else
-    if (pthread_create(&svr->thread,NULL,ctrlsvrthread,svr)) {
+    if (pthread_create(&svr->thread,NULL,coresvrthread,svr)) {
 #endif
 
         svr->state=0;

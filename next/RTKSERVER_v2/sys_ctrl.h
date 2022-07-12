@@ -53,7 +53,7 @@ struct conctrl_t
 
 
 //数据库接口参数结构体
-struct sqlinfo_t
+struct sqlctrl_t
 {
     ToSql *tosql;
 
@@ -80,7 +80,7 @@ private:
 
     //core相关
     int coresvrinit(coresvr_t *svr);
-    int svrcoreinit(svrcore_t *svrcore);
+    int corectrlinit(corectrl_t *corectrl);
 
 
     //sql相关
@@ -102,9 +102,6 @@ public:
 
 
 
-
-
-
     /* ---------------整个程序的基础配置文件路径---------------------*/
 
     char inipath[MAXPATH]; //配置路径
@@ -114,9 +111,9 @@ public:
     //外部通信/控制 连接参数
     conctrl_t *conctrl;
     //core设置 处理参数
-    svrcore_t *svrcore;
+    corectrl_t *corectrl;
     //数据库 连接设置
-    sqlinfo_t *sqlinfo;
+    sqlctrl_t *sqlctrl;
 
     /* ---------------基线信息记录与各模块间数据交换-----------------*/
 
@@ -157,13 +154,13 @@ public:
     /* -----------------------Core线程方法------------------------*/
     //Core相关
     int loadCoreOpt(char *coreopt);
-    int createCoreThread(svrcore_t *svrcore);
-    int stopCoreThread(svrcore_t *svrcore);
+    int createCoreThread(corectrl_t *corectrl);
+    int stopCoreThread(corectrl_t *corectrl);
 
 
     /* -----------------------SQL线程方法-------------------------*/
     //SQL相关
-    int createSqlThread(sqlinfo_t *sqlinfo);
+    int createSqlThread(sqlctrl_t *sqlctrl);
         //SQL输出设置 输出内容控制、表名格式控制、输出间隔控制
 
 

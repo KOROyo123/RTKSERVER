@@ -120,7 +120,7 @@ public:
 
 };
 
-struct svrcore_t
+struct corectrl_t
 {
 
     Core *core;

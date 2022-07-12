@@ -101,19 +101,24 @@ struct sqlexchange_t
 
 };
 
-
-
-
-
 struct sqlsvr_t
 {
 
     navilist_t **navilist;
-    svrcore_t **svrcore;
+    corectrl_t **corectrl;
 
 
 
     int state;
+
+
+    thread_t thread;    /* server thread */
+    lock_t lock;        /* lock flag */
+
+
+
+
+    int navicount;
 
 
 
@@ -157,8 +162,8 @@ public:
 
 
 
-    //读取数据库的参数
-    int Init();
+
+
 
     // 连接打开
     int Open();
@@ -186,10 +191,28 @@ public:
     int update_xxxx();
 
 
+public:
+
+    sqlsvr_t *svr;
+    stream_t *moni;
+
+    //读取数据库的参数
+    int Init(sqlsvr_t *sqlsvr);
+
+
+    //
+    int svrStart();
+    int svrStop();
+
+    int resetState();
+
+
+
+
+
 
 
 };
-
 
 
 

@@ -1,3 +1,2 @@
-task1 -in tcpcli://101.34.228.202:10001 -out file://E:/GNSSDATA/CH01_%y%m%d.log::T::S=24
-task2 -in ntrip://admin:123456@101.34.12.202:2101/SK00 -out file://E:/GNSSDATA/building/CH02_%y%m%d.log::T::S=24
+task1 -in tcpcli://101.34.228.202:10001 -out tcpcli://49.234.134.179:11001
 END OF LIST

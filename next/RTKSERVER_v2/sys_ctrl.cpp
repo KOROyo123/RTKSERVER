@@ -70,7 +70,7 @@ int SysCtrl::ctrlsvrinit(ctrlsvr_t *svr)
 int SysCtrl::coresvrinit(coresvr_t *svr)
 {
 
-   //设置 svrcore的基本参数
+   //设置 corectrl的基本参数
 
     return 0;
 }
@@ -93,18 +93,13 @@ int SysCtrl::printSysState()
 
 
 
-
-
-
-
-
     //core运行状态
-    if(svrcore->coresvr->state==1)
+    if(corectrl->coresvr->state==1)
     {
 
-        qDebug()<<"数据融合模块：运行中  Navi任务数量:"<<svrcore->coresvr->navicount;
+        qDebug()<<"数据融合模块：运行中  Navi任务数量:"<<corectrl->coresvr->navicount;
     }
-    else if(svrcore->coresvr->state==1==0)
+    else if(corectrl->coresvr->state==1==0)
     {
         qDebug()<<"数据融合模块：已停止";
     }
@@ -112,22 +107,15 @@ int SysCtrl::printSysState()
 
 
 
-
-
-
-
-
-
-
     //SQL运行状态
     //core运行状态
-    if(sqlinfo->sqlsvr->state==1)
+    if(sqlctrl->sqlsvr->state==1)
     {
-        printf("数据库模块：运行中");
+        qDebug()<<"数据输出模块：运行中  数据库连接:49.234.134.179:3306";
     }
     else if(conctrl->ctrlsvr.state==0)
     {
-        printf("数据库模块：已停止");
+        qDebug()<<"数据输出模块：已停止";
     }
 
 
@@ -180,8 +168,6 @@ int SysCtrl::printNavilist()
 }
 
 
-
-
 SysCtrl::SysCtrl()
 {
 
@@ -191,28 +177,29 @@ SysCtrl::SysCtrl()
     //申请空间
     conctrl=new(std::nothrow) conctrl_t;
 
-    svrcore=new(std::nothrow) svrcore_t;
+    corectrl=new(std::nothrow) corectrl_t;
 
-    sqlinfo=new(std::nothrow) sqlinfo_t;
+    sqlctrl=new(std::nothrow) sqlctrl_t;
 
 
 
     //子对象空间分配
-    svrcore->core=new(std::nothrow) Core;
-    svrcore->coresvr=new(std::nothrow) coresvr_t;
-    svrcore->moni=new(std::nothrow) stream_t;
+    corectrl->core=new(std::nothrow) Core;
+    corectrl->coresvr=new(std::nothrow) coresvr_t;
+    corectrl->moni=new(std::nothrow) stream_t;
 
 
-    sqlinfo->tosql=new(std::nothrow) ToSql;
-    sqlinfo->sqlsvr=new(std::nothrow)sqlsvr_t;
-    sqlinfo->moni=new(std::nothrow)stream_t;
+    sqlctrl->tosql=new(std::nothrow) ToSql;
+    sqlctrl->sqlsvr=new(std::nothrow)sqlsvr_t;
+    sqlctrl->moni=new(std::nothrow)stream_t;
 
     //类内成员初始化
     navilist=last_svrs=nullptr;
 
-    svrcore->coresvr->navilist=&navilist;
+    corectrl->coresvr->navilist=&navilist;
 
-    sqlinfo->sqlsvr->navilist=&navilist;
+    sqlctrl->sqlsvr->navilist=&navilist;
+    sqlctrl->sqlsvr->corectrl=&corectrl;
 
 
 }
@@ -230,12 +217,12 @@ int SysCtrl::Init(int argc, char *argv[])
 
 
     //设置core线程参数
-    //svrcore->
+    //corectrl->
 
 
 
     //设置数据库参数
-    //sqlinfo->
+    //sqlctrl->
 
 
 
@@ -258,7 +245,7 @@ int SysCtrl::Start()
 
 
     //开启control通讯线程
-    ;
+
 
     if(createCtrlThread(conctrl))
     {
@@ -267,16 +254,16 @@ int SysCtrl::Start()
 
 
     //开启core处理线程
-    if(createCoreThread(svrcore))
+    if(createCoreThread(corectrl))
     {
         qDebug()<<"数据融合模块正在启动";
     }
 
 
     //开启数据库输出线程
-    if(createSqlThread(sqlinfo))
+    if(createSqlThread(sqlctrl))
     {
-        qDebug()<<"数据库融合模块正在启动";
+        qDebug()<<"数据输出模块正在启动";
     }
 
 
@@ -286,6 +273,15 @@ int SysCtrl::Start()
     Timer.start();
 
     return 0;
+
+
+
+
+
+
+
+
+
 }
 
 
@@ -433,12 +429,12 @@ int SysCtrl::cmdProcess(char *cmd)
 
     if (strstr(cmd, "start core") != NULL)
     {
-        if(svrcore->coresvr->state==1)
+        if(corectrl->coresvr->state==1)
         qDebug()<<"数据融合模块正在运行";
-        else if(svrcore->coresvr->state==0)
+        else if(corectrl->coresvr->state==0)
         {
             //开启core处理线程
-            if(createCoreThread(svrcore))
+            if(createCoreThread(corectrl))
             {
                 qDebug()<<"数据融合模块正在启动";
             }
@@ -448,12 +444,12 @@ int SysCtrl::cmdProcess(char *cmd)
 
     if (strstr(cmd, "stop core") != NULL)
     {
-        if(svrcore->coresvr->state==0)
+        if(corectrl->coresvr->state==0)
         qDebug()<<"数据融合模块已停止";
-        else if(svrcore->coresvr->state==1)
+        else if(corectrl->coresvr->state==1)
         {
             //开启core处理线程
-            if(stopCoreThread(svrcore))
+            if(stopCoreThread(corectrl))
             {
                 qDebug()<<"数据融合模块正在停止";
             }
@@ -500,37 +496,50 @@ int SysCtrl::createNaviThread(char *confpath)
 
  int SysCtrl::loadCoreOpt(char *coreopt)
  {
-     //从ini文件读取并设置svrcore的参数
+     //从ini文件读取并设置corectrl的参数
 
      return 0;
  }
 
-int SysCtrl::createCoreThread(svrcore_t *svrcore)
+int SysCtrl::createCoreThread(corectrl_t *corectrl)
 {
 
-    coresvr_t *svr=svrcore->coresvr;
+    coresvr_t *svr=corectrl->coresvr;
 
 
     //设置svr的具体参数哦
     svr->state=0;
 
 
-    svrcore->core->Init(svrcore->coresvr);
-    //svrcore->core->svrStart();
+    corectrl->core->Init(corectrl->coresvr);
+    //corectrl->core->svrStart();
 
 
-    return svrcore->core->svrStart();;
+    return corectrl->core->svrStart();;
 }
 
-int SysCtrl::stopCoreThread(svrcore_t *svrcore)
+int SysCtrl::stopCoreThread(corectrl_t *corectrl)
 {
-    svrcore->coresvr->state=0;
+    corectrl->coresvr->state=0;
 }
 
-int SysCtrl::createSqlThread(sqlinfo_t *sqlinfo)
+int SysCtrl::createSqlThread(sqlctrl_t *sqlctrl)
 {
 
-    sqlinfo->sqlsvr->state=-1;
+
+    sqlsvr_t *svr=sqlctrl->sqlsvr;
+
+
+    //设置svr的具体参数哦
+    svr->state=0;
+
+
+    sqlctrl->tosql->Init(sqlctrl->sqlsvr);
+    //corectrl->core->svrStart();
+
+
+    return sqlctrl->tosql->svrStart();
+
 
 
     return 0;
