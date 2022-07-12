@@ -55,6 +55,12 @@ extern "C" {
 #define EXPORT
 #endif
 
+//for linux
+#ifndef MAXCHAR
+#define MAXCHAR 0x7f
+#endif
+
+
 /* constants -----------------------------------------------------------------*/
 
 #define VER_RTKLIB  "2.4.3"             /* library version */
