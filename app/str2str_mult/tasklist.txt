@@ -1,0 +1,2 @@
+task1 -in tcpcli://101.34.228.202:10001 -out ntrips://admin:123456@49.234.134.179:2101/TEST01
+END OF LIST
