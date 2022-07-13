@@ -34,8 +34,8 @@
 #include "rtklib.h"
 
 //for Linux
-#ifndef MAXCHAR
-#define MAXCHAR 0x7f
+#ifndef MAXPATH
+#define MAXPATH 1024
 #endif
 
 
@@ -448,9 +448,9 @@ int main(int argc, char **argv)
     int maxtask=50;//最大支持的任务数量
     int tasknum=0;
 
-    char task[maxtask][MAXCHAR];
+    char task[maxtask][MAXPATH];
 
-    char taskpath[MAXCHAR];
+    char taskpath[MAXPATH];
 
     //读文件，获取数据流内容和数据流数量
 
@@ -493,7 +493,7 @@ int main(int argc, char **argv)
     for(tasknum=0;tasknum<maxtask;)
     {
 
-        fgets(task[tasknum],MAXCHAR,tasklist);
+        fgets(task[tasknum],MAXPATH,tasklist);
 
         if (strstr(task[tasknum], "END OF LIST") != NULL)
         {

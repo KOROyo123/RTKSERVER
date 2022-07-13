@@ -5,7 +5,7 @@ CONFIG -= qt
 
 include(../../RTKLib.pri)
 
-TARGET = str2str_mult_v1.6.2
+TARGET = str2str_mult_v1.6.3
 TEMPLATE = app
 
 INCLUDEPATH += ../../src
