@@ -1,12 +1,17 @@
 TEMPLATE = subdirs
 
-SUBDIRS=    RTKSERVER_v2\
-#    rtk_analysis \
-#    rtk_record  \
-#    rtkrcv_mult \
-#    str2str_qt     \
-#    SPP\
-#    rtkrcv_qt\
-    rtk_funtest \
-#    rtk_tools\
-    server_mult
+
+linux{
+    SUBDIRS=RTKSERVER_v2\
+            rtk_funtest \
+            server_mult \
+            IMX6U_str2str \
+
+}
+
+win32 {
+    SUBDIRS=RTKSERVER_v2\
+            rtk_funtest \
+            server_mult
+
+}

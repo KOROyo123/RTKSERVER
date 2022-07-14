@@ -33,6 +33,8 @@
 #include <unistd.h>
 #include "rtklib.h"
 
+#include <sys/time.h>
+
 //for Linux
 #ifndef MAXPATH
 #define MAXPATH 4096
@@ -383,7 +385,7 @@ int svrstop(strsvr_t *strsvr,int n)
     /* stop stream server */
     for(int i=0;i<n;i++)
     {
-        strsvrstop(&strsvr[n],cmds);
+        strsvrstop(&strsvr[i],cmds);
     }
 
     for (i=0;i<n;i++) {
@@ -436,22 +438,146 @@ int char2arg(char* str, int* argc, char** argv, int number)
 }
 
 
+void TimeSet(int year,int month,int day,int hour,int min,int sec)
+{
+    struct tm tptr;
+    struct timeval tv;
+
+    tptr.tm_year = year - 1900;
+    tptr.tm_mon = month - 1;
+    tptr.tm_mday = day;
+    tptr.tm_hour = hour;
+    tptr.tm_min = min;
+    tptr.tm_sec = sec;
+
+    tv.tv_sec = mktime(&tptr);
+    tv.tv_usec = 0;
+    settimeofday(&tv, NULL);
+
+}
+
+
+int timesync(char *timepath)
+{
+
+    uint8_t buff[1024]={""};
+    uint8_t buff_fin[1024]={""};
+
+    stream_t timestr;
+
+    strinit(&timestr);
+
+
+    int types=STR_FILE;
+    char paths[1024];
+    int fmts=0;
+    if (!decodepath(timepath,&types,paths,&fmts)) return -1;
+
+    if (stropen(&timestr,types,STR_MODE_RW,paths)) {
+        strsettimeout(&timestr,0,0);
+    }
+
+    sleepms(2000);
+
+    strsendcmd(&timestr,"unlogall\n");
+    printf("send unlogall\n");
+
+
+    sleepms(2000);
+
+    strread(&timestr,buff,1024);
+    printf("%s",buff);
+
+
+
+    for(int i=0;i<100;i++)
+    {
+        uint8_t buff_temp[1024]={""};
+
+        strsendcmd(&timestr,"log gprmc\n");
+        printf("send log gprmc\n");
+
+        sleepms(2000);
+
+        strread(&timestr,buff_temp,1024);
+
+        printf("%s\n",buff_temp);
+
+
+
+        if (strstr((char*)buff_temp, "$GPRMC") != NULL)
+        {
+            printf("GET GPRMC\n");
+
+            printf("%s\n",buff_temp);
+
+
+            char *gprmc=strstr((char*)buff_temp, "$GPRMC");
+
+
+
+            int time[6];
+            char a[3];
+
+            strncpy(a,gprmc+68,2);
+            time[0]=atoi(a);
+            strncpy(a,gprmc+66,2);
+            time[1]=atoi(a);
+            strncpy(a,gprmc+64,2);
+            time[2]=atoi(a);
+            strncpy(a,gprmc+7,2);
+            time[3]=atoi(a);
+            strncpy(a,gprmc+9,2);
+            time[4]=atoi(a);
+            strncpy(a,gprmc+11,2);
+            time[5]=atoi(a);
+
+            TimeSet(time[0]+2000,time[1],time[2],time[3],time[4],time[5]);
+
+
+            printf("time is set: %d-%d-%d %d:%d:%d\n",time[0]+2000,time[1],time[2],time[3],time[4],time[5]);
+
+
+            strsendcmd(&timestr,"unlogall\n");
+            printf("send unlogall\n");
+            sleepms(2000);
+
+
+            strclose(&timestr);
+
+
+            break;
+        }
+
+    }
+
+
+
+
+
+    sleepms(3000);
+
+    return 0;
+
+}
+
+
 int main(int argc, char **argv)
 {
     int dispint=1000;//控制台状态刷新的时间
     int maxtask=50;//最大支持的任务数量
-    int tasknum=0;
+    int tasknum=0;//当前任务数量
 
     char task[maxtask][MAXPATH];
-
     char taskpath[MAXPATH];
 
     //读文件，获取数据流内容和数据流数量
 
+
+    //获取conf路径  没有输入则默认和程序在同一目录下
     if(argc<2)
     {
         strcpy(taskpath,"tasklist.txt");
-
     }
     else
     {
@@ -467,10 +593,7 @@ int main(int argc, char **argv)
      printf("set tasklist path: %s\n",taskpath);
 
 
-          //  if (!decodepath(argv[++i],types,paths[0],fmts)) return -1;
-
-
-
+     //打开文件路径
     FILE *tasklist=fopen(taskpath,"r");
     if(tasklist == NULL)
         {
@@ -481,6 +604,47 @@ int main(int argc, char **argv)
 
    // char a[MAXCHAR];
     //fgets(a,MAXCHAR,tasklist);//读文件头并略过
+
+
+//    //时间同步过程------------------------------------------------------------
+
+//    uint8_t UNLOG[]={"unlogall\0"};
+//    uint8_t GPRMC[]={"log gprmc\0"};
+
+
+
+    char gettime[MAXPATH];
+    char timepath[MAXPATH];
+
+    while(1)
+    {
+
+        fgets(gettime,MAXPATH,tasklist);
+
+
+
+        if (strstr(gettime, "END OF SETTING") != NULL)
+        {
+            printf("setting:%s",timepath);
+            break;
+        }
+        else
+        {
+            strncpy(timepath,gettime,MAXPATH);
+        }
+
+    }
+
+
+
+    timesync(timepath);
+
+
+
+    //正式任务过程--------------------------------------------------------------------------
+
+
+
 
     for(tasknum=0;tasknum<maxtask;)
     {

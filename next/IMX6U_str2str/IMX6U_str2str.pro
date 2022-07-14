@@ -5,7 +5,7 @@ CONFIG -= qt
 
 include(../../RTKLib.pri)
 
-TARGET = str2str_mult_v1.6.4
+TARGET = IMX6U_str2str_v1.0.13
 TEMPLATE = app
 
 INCLUDEPATH += ../../src
@@ -37,6 +37,3 @@ SOURCES += \
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
-
-
-
